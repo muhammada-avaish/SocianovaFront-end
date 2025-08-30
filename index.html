@@ -80,7 +80,6 @@
 
 </div>
 
-<!-- Footer -->
 <footer class="bg-gray-200 text-center py-3 text-sm text-gray-600">
   Made with ❤️ by <strong>BloxStudios</strong> | Muhammad Ahmad
 </footer>
@@ -108,24 +107,28 @@ async function signup(){
   const username = document.getElementById("signup-username").value.trim();
   const password = document.getElementById("signup-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
-  const res = await fetch(`${API_URL}/auth/signup`, {
+
+  const res = await fetch(`${API_URL}/auth/register`, { // correct endpoint
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({username,password})
   });
-  if(res.ok) { alert("Signup successful!"); toggleAuth('login'); } 
-  else { const d=await res.json(); alert(d.message||"Signup failed"); }
+
+  if(res.ok){ alert("Signup successful! Please login."); toggleAuth('login'); }
+  else{ const data = await res.json(); alert(data.message||"Signup failed"); }
 }
 
 async function login(){
   const username = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
+
   const res = await fetch(`${API_URL}/auth/login`, {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({username,password})
   });
+
   const data = await res.json();
   if(res.ok){
     token = data.token;
@@ -158,8 +161,7 @@ async function loadPosts(){
   const res = await fetch(`${API_URL}/posts`, { headers:{"Authorization":`Bearer ${token}`} });
   if(res.status===401){ logout(); return; }
   const posts = await res.json();
-  const postsDiv = document.getElementById("posts");
-  postsDiv.innerHTML = posts.map(p=>`
+  document.getElementById("posts").innerHTML = posts.map(p=>`
     <div class="border p-3 rounded-lg bg-white shadow hover:shadow-md transition">
       <strong>${p.author}</strong>: ${p.content}
     </div>
@@ -184,9 +186,7 @@ async function loadMessages(){
   if(res.status===401){ logout(); return; }
   const msgs = await res.json();
   document.getElementById("messages").innerHTML = msgs.map(m=>`
-    <div class="border p-2 rounded-lg bg-white shadow">
-      <strong>${m.sender}</strong>: ${m.text}
-    </div>
+    <div class="border p-2 rounded-lg bg-white shadow">${m.sender}: ${m.text}</div>
   `).join("");
 }
 
@@ -195,7 +195,7 @@ async function loadProfile(){
   const res = await fetch(`${API_URL}/auth/me`, { headers:{"Authorization":`Bearer ${token}`} });
   if(res.ok){
     const data = await res.json();
-    document.getElementById("profile-username").value = data.username || "";
+    document.getElementById("profile-username").value = data.username||"";
   }
 }
 
@@ -203,6 +203,7 @@ async function updateProfile(){
   const username = document.getElementById("profile-username").value.trim();
   const password = document.getElementById("profile-password").value.trim();
   if(!username && !password) return alert("Fill at least one field");
+
   const res = await fetch(`${API_URL}/auth/update`, {
     method:"PUT",
     headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
@@ -212,16 +213,8 @@ async function updateProfile(){
   else alert("Update failed");
 }
 
-// Navigation
-function goTo(page){
-  if(page==="feed-page") loadPosts();
-  if(page==="messages-page") loadMessages();
-  if(page==="profile-page") loadProfile();
-  show(page);
-}
-
-// Auto-login
-if(token) show("feed-page");
+// Auto login
+if(token){ loadPosts(); show("feed-page"); } 
 else show("auth-page");
 </script>
 </body>
