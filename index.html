@@ -106,29 +106,50 @@ async function signup(){
   const username = document.getElementById("signup-username").value.trim();
   const password = document.getElementById("signup-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
-  const res = await fetch(`${API_URL}/auth/signup`, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username,password})
-  });
-  alert(res.ok ? "Signup successful!" : "Signup failed");
+
+  try {
+    const res = await fetch(`${API_URL}/auth/register`, {  // backend route
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if(res.ok){
+      alert("Signup successful! Now login.");
+      toggleAuth('login');
+    } else {
+      alert("Signup failed: " + (data.message || JSON.stringify(data)));
+      console.log(data);
+    }
+  } catch(err){
+    alert("Network error: " + err.message);
+  }
 }
 
 async function login(){
   const username = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
-  const res = await fetch(`${API_URL}/auth/login`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username,password})
-  });
-  const data = await res.json();
-  if(res.ok){
-    token = data.token;
-    localStorage.setItem("token",token);
-    goTo("feed-page");
-  } else alert(data.message||"Login failed");
+
+  try {
+    const res = await fetch(`${API_URL}/auth/login`,{
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(res.ok){
+      token = data.token;
+      localStorage.setItem("token",token);
+      alert("Login successful!");
+      goTo("feed-page");
+    } else {
+      alert("Login failed: " + (data.message || "Unknown error"));
+      console.log("Login error:", data);
+    }
+  } catch(err){
+    alert("Network error: " + err.message);
+  }
 }
 
 function logout(){
@@ -189,7 +210,6 @@ async function loadMessages(){
 
 // ===== Profile =====
 async function loadProfile(){
-  // Load current username if API supports it
   const res = await fetch(`${API_URL}/auth/me`,{
     headers:{"Authorization":`Bearer ${token}`}
   });
@@ -213,8 +233,9 @@ async function updateProfile(){
 }
 
 // ===== Auto-login =====
-if(token) goTo("feed-page");
+if(token) goTo("feed
+-page");
 else show("auth-page");
 </script>
-</body>
-</html>
+
+</body> </html>
