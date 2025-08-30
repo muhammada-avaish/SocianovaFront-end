@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SociaNova</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .fade { transition: all 0.3s ease-in-out; opacity: 0; height: 0; overflow: hidden; }
+  .fade.show { opacity: 1; height: auto; }
+</style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+
+<div class="max-w-2xl mx-auto p-6 flex-grow">
+
+  <!-- ===== Login / Signup ===== -->
+  <div id="auth-page" class="fade">
+    <h1 class="text-3xl font-bold text-center mb-6">SociaNova</h1>
+    
+    <div class="flex justify-center gap-4 mb-6">
+      <button onclick="toggleAuth('login')" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Login</button>
+      <button onclick="toggleAuth('signup')" class="px-4 py-2 bg-green-500 text-white rounded-lg">Signup</button>
+    </div>
+
+    <div id="login-form" class="fade show">
+      <input id="login-username" placeholder="Username" class="w-full border p-2 mb-2 rounded-lg">
+      <input id="login-password" type="password" placeholder="Password" class="w-full border p-2 mb-2 rounded-lg">
+      <button onclick="login()" class="bg-blue-500 w-full py-2 text-white rounded-lg hover:shadow-md transition">Login</button>
+    </div>
+
+    <div id="signup-form" class="fade">
+      <input id="signup-username" placeholder="Username" class="w-full border p-2 mb-2 rounded-lg">
+      <input id="signup-password" type="password" placeholder="Password" class="w-full border p-2 mb-2 rounded-lg">
+      <button onclick="signup()" class="bg-green-500 w-full py-2 text-white rounded-lg hover:shadow-md transition">Signup</button>
+    </div>
+  </div>
+
+  <!-- ===== Feed ===== -->
+  <div id="feed-page" class="fade">
+    <h2 class="text-2xl font-bold mb-4">Feed</h2>
+    <textarea id="post-content" class="w-full p-2 border rounded-lg mb-2" placeholder="What's on your mind?"></textarea>
+    <button onclick="createPost()" class="bg-green-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Post</button>
+
+    <div id="posts" class="mt-4 space-y-2"></div>
+
+    <div class="flex gap-2 mt-6">
+      <button onclick="goTo('messages-page')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Messages</button>
+      <button onclick="goTo('profile-page')" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Profile</button>
+      <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Logout</button>
+    </div>
+  </div>
+
+  <!-- ===== Messages ===== -->
+  <div id="messages-page" class="fade">
+    <h2 class="text-2xl font-bold mb-4">Messages</h2>
+    <input id="receiver" placeholder="Receiver username" class="w-full border p-2 mb-2 rounded-lg">
+    <textarea id="message-text" placeholder="Type a message..." class="w-full border p-2 rounded-lg mb-2"></textarea>
+    <button onclick="sendMessage()" class="bg-blue-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Send</button>
+    <div id="messages" class="mt-4 space-y-2"></div>
+    <button onclick="goTo('feed-page')" class="mt-4 bg-gray-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Back</button>
+  </div>
+
+  <!-- ===== Profile Editing ===== -->
+  <div id="profile-page" class="fade">
+    <h2 class="text-2xl font-bold mb-4">Profile</h2>
+    <input id="profile-username" placeholder="New Username" class="w-full border p-2 mb-2 rounded-lg">
+    <input id="profile-password" type="password" placeholder="New Password" class="w-full border p-2 mb-2 rounded-lg">
+    <button onclick="updateProfile()" class="bg-purple-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Update Profile</button>
+    <button onclick="goTo('feed-page')" class="mt-4 bg-gray-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Back</button>
+  </div>
+
+</div>
+
+<!-- ===== Credits ===== -->
+<footer class="bg-gray-200 text-center py-3 text-sm text-gray-600">
+  Made with ❤️ by <strong>BloxStudios</strong> | Muhammad Ahmad
+</footer>
+
+<script>
+const API_URL = "https://socianova.onrender.com/api";
+let token = localStorage.getItem("token");
+
+// ===== Page Handling =====
+function show(pageId){
+  document.querySelectorAll("#auth-page, #feed-page, #messages-page, #profile-page")
+    .forEach(p => p.classList.remove("show"));
+  document.getElementById(pageId).classList.add("show");
+}
+
+function goTo(pageId){
+  if(pageId === "feed-page") loadPosts();
+  if(pageId === "messages-page") loadMessages();
+  if(pageId === "profile-page") loadProfile();
+  show(pageId);
+}
+
+function toggleAuth(form){
+  document.getElementById("login-form").classList.remove("show");
+  document.getElementById("signup-form").classList.remove("show");
+  document.getElementById(form+"-form").classList.add("show");
+}
+
+// ===== Auth =====
+async function signup(){
+  const username = document.getElementById("signup-username").value.trim();
+  const password = document.getElementById("signup-password").value.trim();
+  if(!username||!password) return alert("Fill all fields");
+  const res = await fetch(`${API_URL}/auth/signup`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({username,password})
+  });
+  alert(res.ok ? "Signup successful!" : "Signup failed");
+}
+
+async function login(){
+  const username = document.getElementById("login-username").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+  if(!username||!password) return alert("Fill all fields");
+  const res = await fetch(`${API_URL}/auth/login`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({username,password})
+  });
+  const data = await res.json();
+  if(res.ok){
+    token = data.token;
+    localStorage.setItem("token",token);
+    goTo("feed-page");
+  } else alert(data.message||"Login failed");
+}
+
+function logout(){
+  token = null;
+  localStorage.removeItem("token");
+  show("auth-page");
+}
+
+// ===== Posts =====
+async function createPost(){
+  const content = document.getElementById("post-content").value.trim();
+  if(!content) return;
+  const res = await fetch(`${API_URL}/posts`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({content})
+  });
+  if(res.ok){
+    document.getElementById("post-content").value="";
+    loadPosts();
+  }
+}
+
+async function loadPosts(){
+  const res = await fetch(`${API_URL}/posts`,{
+    headers:{"Authorization":`Bearer ${token}`}
+  });
+  if(res.status===401){logout(); return;}
+  const posts = await res.json();
+  const postsDiv = document.getElementById("posts");
+  postsDiv.innerHTML = posts.map(p=>`<div class="border p-2 rounded-lg bg-white"><strong>${p.author}</strong>: ${p.content}</div>`).join("");
+}
+
+// ===== Messages =====
+async function sendMessage(){
+  const receiver = document.getElementById("receiver").value.trim();
+  const text = document.getElementById("message-text").value.trim();
+  if(!receiver||!text) return;
+  const res = await fetch(`${API_URL}/messages`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({receiver,text})
+  });
+  if(res.ok){
+    document.getElementById("message-text").value="";
+    loadMessages();
+  }
+}
+
+async function loadMessages(){
+  const res = await fetch(`${API_URL}/messages`,{
+    headers:{"Authorization":`Bearer ${token}`}
+  });
+  if(res.status===401){logout(); return;}
+  const msgs = await res.json();
+  document.getElementById("messages").innerHTML = msgs.map(m=>`<div class="border p-2 rounded-lg bg-white"><strong>${m.sender}</strong>: ${m.text}</div>`).join("");
+}
+
+// ===== Profile =====
+async function loadProfile(){
+  // Load current username if API supports it
+  const res = await fetch(`${API_URL}/auth/me`,{
+    headers:{"Authorization":`Bearer ${token}`}
+  });
+  if(res.ok){
+    const data = await res.json();
+    document.getElementById("profile-username").value = data.username||"";
+  }
+}
+
+async function updateProfile(){
+  const username = document.getElementById("profile-username").value.trim();
+  const password = document.getElementById("profile-password").value.trim();
+  if(!username && !password) return alert("Fill at least one field");
+  const res = await fetch(`${API_URL}/auth/update`,{
+    method:"PUT",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({username,password})
+  });
+  if(res.ok) alert("Profile updated!");
+  else alert("Update failed");
+}
+
+// ===== Auto-login =====
+if(token) goTo("feed-page");
+else show("auth-page");
+</script>
+</body>
+</html>
