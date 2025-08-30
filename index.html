@@ -8,6 +8,7 @@
 <style>
   .fade { transition: all 0.3s ease-in-out; opacity: 0; height: 0; overflow: hidden; }
   .fade.show { opacity: 1; height: auto; }
+  ::placeholder { color: #a0aec0; }
 </style>
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
@@ -16,29 +17,29 @@
 
   <!-- ===== Login / Signup ===== -->
   <div id="auth-page" class="fade">
-    <h1 class="text-3xl font-bold text-center mb-6">SociaNova</h1>
+    <h1 class="text-3xl font-bold text-center mb-6 text-gray-700">SociaNova</h1>
     
     <div class="flex justify-center gap-4 mb-6">
-      <button onclick="toggleAuth('login')" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Login</button>
-      <button onclick="toggleAuth('signup')" class="px-4 py-2 bg-green-500 text-white rounded-lg">Signup</button>
+      <button onclick="toggleAuth('login')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:shadow-md transition">Login</button>
+      <button onclick="toggleAuth('signup')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:shadow-md transition">Signup</button>
     </div>
 
-    <div id="login-form" class="fade show">
-      <input id="login-username" placeholder="Username" class="w-full border p-2 mb-2 rounded-lg">
-      <input id="login-password" type="password" placeholder="Password" class="w-full border p-2 mb-2 rounded-lg">
-      <button onclick="login()" class="bg-blue-500 w-full py-2 text-white rounded-lg hover:shadow-md transition">Login</button>
+    <div id="login-form" class="fade show flex flex-col gap-2">
+      <input id="login-username" placeholder="Username" class="w-full border p-2 rounded-lg">
+      <input id="login-password" type="password" placeholder="Password" class="w-full border p-2 rounded-lg">
+      <button onclick="login()" class="bg-blue-500 w-full py-2 text-white rounded-lg hover:shadow-md transition mt-2">Login</button>
     </div>
 
-    <div id="signup-form" class="fade">
-      <input id="signup-username" placeholder="Username" class="w-full border p-2 mb-2 rounded-lg">
-      <input id="signup-password" type="password" placeholder="Password" class="w-full border p-2 mb-2 rounded-lg">
-      <button onclick="signup()" class="bg-green-500 w-full py-2 text-white rounded-lg hover:shadow-md transition">Signup</button>
+    <div id="signup-form" class="fade flex flex-col gap-2">
+      <input id="signup-username" placeholder="Username" class="w-full border p-2 rounded-lg">
+      <input id="signup-password" type="password" placeholder="Password" class="w-full border p-2 rounded-lg">
+      <button onclick="signup()" class="bg-green-500 w-full py-2 text-white rounded-lg hover:shadow-md transition mt-2">Signup</button>
     </div>
   </div>
 
   <!-- ===== Feed ===== -->
   <div id="feed-page" class="fade">
-    <h2 class="text-2xl font-bold mb-4">Feed</h2>
+    <h2 class="text-2xl font-bold mb-4 text-gray-700">Feed</h2>
     <textarea id="post-content" class="w-full p-2 border rounded-lg mb-2" placeholder="What's on your mind?"></textarea>
     <button onclick="createPost()" class="bg-green-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Post</button>
 
@@ -53,7 +54,7 @@
 
   <!-- ===== Messages ===== -->
   <div id="messages-page" class="fade">
-    <h2 class="text-2xl font-bold mb-4">Messages</h2>
+    <h2 class="text-2xl font-bold mb-4 text-gray-700">Messages</h2>
     <input id="receiver" placeholder="Receiver username" class="w-full border p-2 mb-2 rounded-lg">
     <textarea id="message-text" placeholder="Type a message..." class="w-full border p-2 rounded-lg mb-2"></textarea>
     <button onclick="sendMessage()" class="bg-blue-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Send</button>
@@ -63,7 +64,7 @@
 
   <!-- ===== Profile Editing ===== -->
   <div id="profile-page" class="fade">
-    <h2 class="text-2xl font-bold mb-4">Profile</h2>
+    <h2 class="text-2xl font-bold mb-4 text-gray-700">Profile</h2>
     <input id="profile-username" placeholder="New Username" class="w-full border p-2 mb-2 rounded-lg">
     <input id="profile-password" type="password" placeholder="New Password" class="w-full border p-2 mb-2 rounded-lg">
     <button onclick="updateProfile()" class="bg-purple-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Update Profile</button>
@@ -106,9 +107,8 @@ async function signup(){
   const username = document.getElementById("signup-username").value.trim();
   const password = document.getElementById("signup-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
-
   try {
-    const res = await fetch(`${API_URL}/auth/register`, {  // backend route
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -117,23 +117,17 @@ async function signup(){
     if(res.ok){
       alert("Signup successful! Now login.");
       toggleAuth('login');
-    } else {
-      alert("Signup failed: " + (data.message || JSON.stringify(data)));
-      console.log(data);
-    }
-  } catch(err){
-    alert("Network error: " + err.message);
-  }
+    } else alert("Signup failed: "+(data.message||JSON.stringify(data)));
+  } catch(err){ alert("Network error: "+err.message); }
 }
 
 async function login(){
   const username = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
-
   try {
-    const res = await fetch(`${API_URL}/auth/login`,{
-      method: "POST",
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method:"POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({username,password})
     });
@@ -143,13 +137,8 @@ async function login(){
       localStorage.setItem("token",token);
       alert("Login successful!");
       goTo("feed-page");
-    } else {
-      alert("Login failed: " + (data.message || "Unknown error"));
-      console.log("Login error:", data);
-    }
-  } catch(err){
-    alert("Network error: " + err.message);
-  }
+    } else alert("Login failed: "+(data.message||"Unknown error"));
+  } catch(err){ alert("Network error: "+err.message); }
 }
 
 function logout(){
@@ -167,20 +156,14 @@ async function createPost(){
     headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
     body:JSON.stringify({content})
   });
-  if(res.ok){
-    document.getElementById("post-content").value="";
-    loadPosts();
-  }
+  if(res.ok){ document.getElementById("post-content").value=""; loadPosts(); }
 }
 
 async function loadPosts(){
-  const res = await fetch(`${API_URL}/posts`,{
-    headers:{"Authorization":`Bearer ${token}`}
-  });
-  if(res.status===401){logout(); return;}
+  const res = await fetch(`${API_URL}/posts`,{ headers:{"Authorization":`Bearer ${token}`} });
+  if(res.status===401){ logout(); return; }
   const posts = await res.json();
-  const postsDiv = document.getElementById("posts");
-  postsDiv.innerHTML = posts.map(p=>`<div class="border p-2 rounded-lg bg-white"><strong>${p.author}</strong>: ${p.content}</div>`).join("");
+  document.getElementById("posts").innerHTML = posts.map(p=>`<div class="border p-2 rounded-lg bg-white"><strong>${p.author}</strong>: ${p.content}</div>`).join("");
 }
 
 // ===== Messages =====
@@ -193,26 +176,19 @@ async function sendMessage(){
     headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
     body:JSON.stringify({receiver,text})
   });
-  if(res.ok){
-    document.getElementById("message-text").value="";
-    loadMessages();
-  }
+  if(res.ok){ document.getElementById("message-text").value=""; loadMessages(); }
 }
 
 async function loadMessages(){
-  const res = await fetch(`${API_URL}/messages`,{
-    headers:{"Authorization":`Bearer ${token}`}
-  });
-  if(res.status===401){logout(); return;}
+  const res = await fetch(`${API_URL}/messages`,{ headers:{"Authorization":`Bearer ${token}`} });
+  if(res.status===401){ logout(); return; }
   const msgs = await res.json();
   document.getElementById("messages").innerHTML = msgs.map(m=>`<div class="border p-2 rounded-lg bg-white"><strong>${m.sender}</strong>: ${m.text}</div>`).join("");
 }
 
 // ===== Profile =====
 async function loadProfile(){
-  const res = await fetch(`${API_URL}/auth/me`,{
-    headers:{"Authorization":`Bearer ${token}`}
-  });
+  const res = await fetch(`${API_URL}/auth/me`,{ headers:{"Authorization":`Bearer ${token}`} });
   if(res.ok){
     const data = await res.json();
     document.getElementById("profile-username").value = data.username||"";
@@ -233,9 +209,9 @@ async function updateProfile(){
 }
 
 // ===== Auto-login =====
-if(token) goTo("feed
--page");
+if(token) goTo("feed-page");
 else show("auth-page");
 </script>
 
-</body> </html>
+</body>
+</html>
