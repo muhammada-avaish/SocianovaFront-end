@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SociaNova - Twitter Clone</title>
+<title>SociaNova</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  .fade { transition: all 0.3s ease-in-out; opacity: 0; height: 0; overflow: hidden; }
-  .fade.show { opacity: 1; height: auto; }
-  ::placeholder { color: #a0aec0; }
+.fade { transition: all 0.3s ease-in-out; opacity: 0; height: 0; overflow: hidden; }
+.fade.show { opacity: 1; height: auto; }
+::placeholder { color: #a0aec0; }
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -26,7 +26,7 @@
 
 <div class="max-w-2xl mx-auto p-4 flex-grow">
 
-  <!-- ===== Auth Page ===== -->
+  <!-- Auth (Login/Signup) -->
   <div id="auth-page" class="fade show">
     <div class="text-center mb-6">
       <h2 class="text-3xl font-bold text-gray-700">Welcome to SociaNova</h2>
@@ -37,14 +37,14 @@
       <button onclick="toggleAuth('signup')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:shadow-md transition">Signup</button>
     </div>
 
-    <!-- Login -->
+    <!-- Login Form -->
     <div id="login-form" class="fade show flex flex-col gap-2">
       <input id="login-username" placeholder="Username" class="w-full border p-2 rounded-lg">
       <input id="login-password" type="password" placeholder="Password" class="w-full border p-2 rounded-lg">
       <button onclick="login()" class="bg-blue-500 w-full py-2 text-white rounded-lg hover:shadow-md mt-2">Login</button>
     </div>
 
-    <!-- Signup -->
+    <!-- Signup Form -->
     <div id="signup-form" class="fade flex flex-col gap-2">
       <input id="signup-username" placeholder="Username" class="w-full border p-2 rounded-lg">
       <input id="signup-password" type="password" placeholder="Password" class="w-full border p-2 rounded-lg">
@@ -52,16 +52,14 @@
     </div>
   </div>
 
-  <!-- ===== Feed ===== -->
+  <!-- Feed Page -->
   <div id="feed-page" class="fade">
-    <div class="flex flex-col gap-2 mb-4">
-      <textarea id="post-content" placeholder="What's happening?" class="w-full border p-2 rounded-lg"></textarea>
-      <button onclick="createPost()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:shadow-md">Post</button>
-    </div>
+    <textarea id="post-content" placeholder="What's happening?" class="w-full border p-2 rounded-lg mb-2"></textarea>
+    <button onclick="createPost()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:shadow-md mb-4">Post</button>
     <div id="posts" class="space-y-4"></div>
   </div>
 
-  <!-- ===== Messages ===== -->
+  <!-- Messages Page -->
   <div id="messages-page" class="fade">
     <h2 class="text-xl font-bold mb-2 text-gray-700">Messages</h2>
     <input id="receiver" placeholder="Receiver username" class="w-full border p-2 rounded-lg mb-2">
@@ -70,7 +68,7 @@
     <div id="messages" class="space-y-2"></div>
   </div>
 
-  <!-- ===== Profile ===== -->
+  <!-- Profile Page -->
   <div id="profile-page" class="fade">
     <h2 class="text-xl font-bold mb-2 text-gray-700">Edit Profile</h2>
     <input id="profile-username" placeholder="New Username" class="w-full border p-2 rounded-lg mb-2">
@@ -88,68 +86,70 @@
 const API_URL = "https://socianova.onrender.com/api";
 let token = localStorage.getItem("token");
 
-// Page Handling
+// Page handling
 function show(pageId){
-  document.querySelectorAll("#auth-page, #feed-page, #messages-page, #profile-page").forEach(p=>p.classList.remove("show"));
+  document.querySelectorAll("#auth-page,#feed-page,#messages-page,#profile-page").forEach(p=>p.classList.remove("show"));
   document.getElementById(pageId).classList.add("show");
   if(pageId!=="auth-page") document.getElementById("nav-links").classList.remove("hidden");
 }
 
-// Toggle login/signup forms
+// Toggle login/signup
 function toggleAuth(form){
   document.getElementById("login-form").classList.remove("show");
   document.getElementById("signup-form").classList.remove("show");
   document.getElementById(form+"-form").classList.add("show");
 }
 
-// Auth
+// Signup
 async function signup(){
   const username = document.getElementById("signup-username").value.trim();
   const password = document.getElementById("signup-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
 
-  const res = await fetch(`${API_URL}/auth/register`, { // correct endpoint
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username,password})
-  });
-
-  if(res.ok){ alert("Signup successful! Please login."); toggleAuth('login'); }
-  else{ const data = await res.json(); alert(data.message||"Signup failed"); }
+  try{
+    const res = await fetch(`${API_URL}/auth/register`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(res.ok){ alert("Signup successful! Please login."); toggleAuth('login'); }
+    else alert(data.message||"Signup failed");
+  } catch(err){
+    console.error(err);
+    alert("Signup failed due to server error");
+  }
 }
 
+// Login
 async function login(){
   const username = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value.trim();
   if(!username||!password) return alert("Fill all fields");
 
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({username,password})
-  });
-
-  const data = await res.json();
-  if(res.ok){
-    token = data.token;
-    localStorage.setItem("token", token);
-    loadPosts();
-    show("feed-page");
-  } else alert(data.message||"Login failed");
+  try{
+    const res = await fetch(`${API_URL}/auth/login`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(res.ok){ token = data.token; localStorage.setItem("token",token); loadPosts(); show("feed-page"); }
+    else alert(data.message||"Login failed");
+  } catch(err){
+    console.error(err);
+    alert("Login failed due to server error");
+  }
 }
 
-function logout(){
-  token = null;
-  localStorage.removeItem("token");
-  show("auth-page");
-  document.getElementById("nav-links").classList.add("hidden");
-}
+// Logout
+function logout(){ token=null; localStorage.removeItem("token"); show("auth-page"); document.getElementById("nav-links").classList.add("hidden"); }
 
 // Posts
 async function createPost(){
   const content = document.getElementById("post-content").value.trim();
   if(!content) return;
-  const res = await fetch(`${API_URL}/posts`, {
+  const res = await fetch(`${API_URL}/posts`,{
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
     body:JSON.stringify({content})
@@ -158,14 +158,13 @@ async function createPost(){
 }
 
 async function loadPosts(){
-  const res = await fetch(`${API_URL}/posts`, { headers:{"Authorization":`Bearer ${token}`} });
+  const res = await fetch(`${API_URL}/posts`,{ headers:{"Authorization":`Bearer ${token}`} });
   if(res.status===401){ logout(); return; }
   const posts = await res.json();
   document.getElementById("posts").innerHTML = posts.map(p=>`
     <div class="border p-3 rounded-lg bg-white shadow hover:shadow-md transition">
       <strong>${p.author}</strong>: ${p.content}
-    </div>
-  `).join("");
+    </div>`).join("");
 }
 
 // Messages
@@ -173,7 +172,7 @@ async function sendMessage(){
   const receiver = document.getElementById("receiver").value.trim();
   const text = document.getElementById("message-text").value.trim();
   if(!receiver||!text) return;
-  const res = await fetch(`${API_URL}/messages`, {
+  const res = await fetch(`${API_URL}/messages`,{
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
     body:JSON.stringify({receiver,text})
@@ -182,7 +181,7 @@ async function sendMessage(){
 }
 
 async function loadMessages(){
-  const res = await fetch(`${API_URL}/messages`, { headers:{"Authorization":`Bearer ${token}`} });
+  const res = await fetch(`${API_URL}/messages`,{ headers:{"Authorization":`Bearer ${token}`} });
   if(res.status===401){ logout(); return; }
   const msgs = await res.json();
   document.getElementById("messages").innerHTML = msgs.map(m=>`
@@ -192,7 +191,7 @@ async function loadMessages(){
 
 // Profile
 async function loadProfile(){
-  const res = await fetch(`${API_URL}/auth/me`, { headers:{"Authorization":`Bearer ${token}`} });
+  const res = await fetch(`${API_URL}/auth/me`,{ headers:{"Authorization":`Bearer ${token}`} });
   if(res.ok){
     const data = await res.json();
     document.getElementById("profile-username").value = data.username||"";
@@ -204,7 +203,7 @@ async function updateProfile(){
   const password = document.getElementById("profile-password").value.trim();
   if(!username && !password) return alert("Fill at least one field");
 
-  const res = await fetch(`${API_URL}/auth/update`, {
+  const res = await fetch(`${API_URL}/auth/update`,{
     method:"PUT",
     headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
     body:JSON.stringify({username,password})
@@ -213,9 +212,8 @@ async function updateProfile(){
   else alert("Update failed");
 }
 
-// Auto login
-if(token){ loadPosts(); show("feed-page"); } 
-else show("auth-page");
+// Auto-login
+if(token){ loadPosts(); show("feed-page"); } else show("auth-page");
 </script>
 </body>
 </html>
