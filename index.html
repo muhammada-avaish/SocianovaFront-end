@@ -14,30 +14,93 @@
 
 <div class="max-w-2xl mx-auto p-6 flex-grow">
 
-  <!-- ===== Auth (Login / Signup) ===== -->
-  <div id="auth-page" class="fade show">
-    <h1 class="text-3xl font-bold text-center mb-6">SociaNova</h1>
-    
-    <div class="flex justify-center gap-4 mb-6">
-      <button onclick="toggleAuth('login')" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Login</button>
-      <button onclick="toggleAuth('signup')" class="px-4 py-2 bg-green-500 text-white rounded-lg">Signup</button>
-    </div>
-
-    <!-- Login Form -->
-    <div id="login-form" class="fade show">
-      <input id="login-email" placeholder="Email" class="w-full border p-2 mb-2 rounded-lg">
-      <input id="login-password" type="password" placeholder="Password" class="w-full border p-2 mb-2 rounded-lg">
-      <button onclick="login()" class="bg-blue-500 w-full py-2 text-white rounded-lg hover:shadow-md transition">Login</button>
-    </div>
-
-    <!-- Signup Form -->
-    <div id="signup-form" class="fade">
-      <input id="signup-username" placeholder="Username" class="w-full border p-2 mb-2 rounded-lg">
-      <input id="signup-email" placeholder="Email" class="w-full border p-2 mb-2 rounded-lg">
-      <input id="signup-password" type="password" placeholder="Password" class="w-full border p-2 mb-2 rounded-lg">
-      <button onclick="signup()" class="bg-green-500 w-full py-2 text-white rounded-lg hover:shadow-md transition">Signup</button>
-    </div>
+  <!-- ====================== AUTH PAGES ====================== -->
+<section id="signup-page" class="min-h-screen flex items-center justify-center bg-gray-100 hidden">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-center mb-6">Sign Up</h2>
+    <input id="signup-username" type="text" placeholder="Username" class="w-full p-2 border rounded mb-3" />
+    <input id="signup-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
+    <input id="signup-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
+    <button onclick="signupUser()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Sign Up</button>
+    <p class="text-sm mt-4 text-center">Already have an account? 
+      <a href="#" onclick="showPage('login-page')" class="text-blue-500">Login</a>
+    </p>
   </div>
+</section>
+
+<section id="login-page" class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+    <input id="login-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
+    <input id="login-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
+    <button onclick="loginUser()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Login</button>
+    <p class="text-sm mt-4 text-center">Don’t have an account? 
+      <a href="#" onclick="showPage('signup-page')" class="text-blue-500">Sign Up</a>
+    </p>
+  </div>
+</section>
+
+<script>
+const API_URL = "https://socianova.onrender.com/api"; // your backend URL
+
+// helper: save token
+const setToken = (token) => localStorage.setItem("token", token);
+
+// page switcher
+function showPage(id) {
+  document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+// SIGNUP
+async function signupUser() {
+  const username = document.getElementById("signup-username").value.trim();
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value.trim();
+
+  try {
+    const res = await fetch(`${API_URL}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) return alert(data.message || "Signup failed");
+
+    setToken(data.token);
+    alert("Signup successful!");
+    // redirect or show feed page
+  } catch (err) {
+    console.error(err);
+    alert("Signup error");
+  }
+}
+
+// LOGIN
+async function loginUser() {
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+
+  try {
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }) // must match backend
+    });
+
+    const data = await res.json();
+    if (!res.ok) return alert(data.message || "Login failed");
+
+    setToken(data.token);
+    alert("Login successful!");
+    // redirect or show feed page
+  } catch (err) {
+    console.error(err);
+    alert("Login error");
+  }
+}
+</script>
 
   <!-- ===== Feed ===== -->
   <div id="feed-page" class="fade">
@@ -77,7 +140,7 @@
 </div>
 
 <footer class="bg-gray-200 text-center py-3 text-sm text-gray-600">
-  Made with ❤️ by <strong>BloxStudios</strong> | Muhammad Ahmad
+A product of <strong>BloxStudios</strong> | Muhammad Ahmad
 </footer>
 
 <script>
