@@ -5,23 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SociaNova</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
 <style>
-  .fade { transition: all 0.3s ease-in-out; opacity: 0; height: 0; overflow: hidden; }
-  .fade.show { opacity: 1; height: auto; }
+/* ===================== General ===================== */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f7f9fc;
+  margin: 0;
+  padding: 0;
+}
+h2 { font-weight: 700; }
+button { cursor: pointer; transition: all 0.2s ease-in-out; }
+
+/* ===================== Fade Animations ===================== */
+.fade { transition: all 0.3s ease-in-out; opacity: 0; height: 0; overflow: hidden; }
+.fade.show { opacity: 1; height: auto; }
+
+/* ===================== Inputs ===================== */
+input, textarea { transition: all 0.2s ease-in-out; }
+input:focus, textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79,70,229,0.2);
+  outline: none;
+}
+
+/* ===================== Buttons ===================== */
+button {
+  border-radius: 0.75rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+}
+button:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+
+/* ===================== Feed / Cards ===================== */
+#posts .post-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.2s ease-in-out;
+}
+#posts .post-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+#posts .post-author { font-weight: 700; color: #4f46e5; }
+#posts .post-content { margin-top: 0.5rem; }
+
+/* ===================== Scrollbars ===================== */
+#posts::-webkit-scrollbar, #messages::-webkit-scrollbar { width: 8px; }
+#posts::-webkit-scrollbar-thumb, #messages::-webkit-scrollbar-thumb {
+  background: rgba(79,70,229,0.5); border-radius: 4px;
+}
+#posts::-webkit-scrollbar-track, #messages::-webkit-scrollbar-track { background: #f1f1f1; }
+
+/* ===================== Profile ===================== */
+#profile-page input {
+  background: #fff; border: 1px solid #e5e7eb; padding: 0.75rem; border-radius: 1rem; margin-bottom: 0.75rem; width: 100%;
+}
+#profile-page button { width: 100%; background: #7c3aed; color: white; }
+#profile-page button:hover { background: #6d28d9; }
+
+/* ===================== Messages ===================== */
+#messages-page input, #messages-page textarea {
+  width: 100%; border-radius: 1rem; border: 1px solid #d1d5db; padding: 0.75rem; margin-bottom: 0.5rem;
+}
+#messages-page button { background: #2563eb; color: white; }
+#messages-page button:hover { background: #1e40af; }
+#messages .message-card { background: #ffffff; border-radius: 1rem; padding: 0.75rem; margin-bottom: 0.5rem; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+#messages .message-sender { font-weight: 600; color: #2563eb; }
+
+/* ===================== Footer ===================== */
+footer { background: #e5e7eb; text-align: center; padding: 1rem; font-size: 0.875rem; color: #4b5563; font-weight: 500; }
+
+/* ===================== Media Upload Preview ===================== */
+.upload-preview { margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.upload-preview img, .upload-preview video { max-width: 120px; max-height: 120px; border-radius: 0.75rem; object-fit: cover; }
+
+/* ===================== Animations ===================== */
+@keyframes fadeIn { 0% {opacity:0; transform:translateY(10px);} 100% {opacity:1; transform:translateY(0);} }
+.animate-fadeIn { animation: fadeIn 0.5s ease forwards; }
 </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
 <div class="max-w-2xl mx-auto p-6 flex-grow">
 
-  <!-- ====================== AUTH PAGES ====================== -->
+<!-- ====================== AUTH PAGES ====================== -->
 <section id="signup-page" class="min-h-screen flex items-center justify-center bg-gray-100 hidden">
   <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
     <h2 class="text-2xl font-bold text-center mb-6">Sign Up - SociaNova</h2>
     <input id="signup-username" type="text" placeholder="Username" class="w-full p-2 border rounded mb-3" />
     <input id="signup-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
     <input id="signup-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
-    <button onclick="signupUser()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Sign Up</button>
+    <button onclick="signupUser()">Sign Up</button>
     <p class="text-sm mt-4 text-center">Already have an account? 
       <a href="#" onclick="showPage('login-page')" class="text-blue-500">Login</a>
     </p>
@@ -33,92 +108,85 @@
     <h2 class="text-2xl font-bold text-center mb-6">Login - SociaNova</h2>
     <input id="login-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
     <input id="login-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
-    <button onclick="loginUser()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Login</button>
+    <button onclick="loginUser()">Login</button>
     <p class="text-sm mt-4 text-center">Don’t have an account? 
       <a href="#" onclick="showPage('signup-page')" class="text-blue-500">Sign Up</a>
     </p>
   </div>
 </section>
 
-  <!-- ===== Feed ===== -->
-  <div id="feed-page" class="fade">
-    <h2 class="text-2xl font-bold mb-4">SociaNova Feed</h2>
-    <textarea id="post-content" class="w-full p-2 border rounded-lg mb-2" placeholder="What's on your mind?"></textarea>
-    <button onclick="createPost()" class="bg-green-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Post</button>
-    <div id="posts" class="mt-4 space-y-2"></div>
-    <div class="flex gap-2 mt-6">
-      <button onclick="goTo('messages-page')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Messages</button>
-      <button onclick="goTo('profile-page')" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Profile</button>
-      <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Logout</button>
-    </div>
+<!-- ====================== Feed ====================== -->
+<section id="feed-page" class="fade p-4 hidden">
+  <h2 class="text-2xl font-bold mb-4">Feed</h2>
+  <textarea id="post-content" class="w-full p-2 border rounded-lg mb-2" placeholder="What's on your mind?"></textarea>
+  <input type="file" id="post-media" accept="image/*,video/*" multiple class="mb-2">
+  <div class="upload-preview" id="upload-preview"></div>
+  <button onclick="createPost()">Post</button>
+  <div id="posts" class="mt-4 space-y-2"></div>
+  <div class="flex gap-2 mt-6">
+    <button onclick="goTo('messages-page')">Messages</button>
+    <button onclick="goTo('profile-page')">Profile</button>
+    <button onclick="logout()">Logout</button>
   </div>
+</section>
 
-  <!-- ===== Messages ===== -->
-  <div id="messages-page" class="fade">
-    <h2 class="text-2xl font-bold mb-4">Messages</h2>
-    <input id="receiver" placeholder="Receiver email" class="w-full border p-2 mb-2 rounded-lg">
-    <textarea id="message-text" placeholder="Type a message..." class="w-full border p-2 rounded-lg mb-2"></textarea>
-    <button onclick="sendMessage()" class="bg-blue-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Send</button>
-    <div id="messages" class="mt-4 space-y-2"></div>
-    <button onclick="goTo('feed-page')" class="mt-4 bg-gray-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Back</button>
-  </div>
+<!-- ====================== Messages ====================== -->
+<section id="messages-page" class="fade p-4 hidden">
+  <h2 class="text-2xl font-bold mb-4">Messages</h2>
+  <input id="receiver" placeholder="Receiver email">
+  <textarea id="message-text" placeholder="Type a message..."></textarea>
+  <button onclick="sendMessage()">Send</button>
+  <div id="messages" class="mt-4 space-y-2"></div>
+  <button onclick="goTo('feed-page')" class="mt-4">Back</button>
+</section>
 
-  <!-- ===== Profile ===== -->
-  <div id="profile-page" class="fade">
-    <h2 class="text-2xl font-bold mb-4">Profile</h2>
-    <input id="profile-username" placeholder="New Username" class="w-full border p-2 mb-2 rounded-lg">
-    <input id="profile-email" placeholder="New Email" class="w-full border p-2 mb-2 rounded-lg">
-    <input id="profile-password" type="password" placeholder="New Password" class="w-full border p-2 mb-2 rounded-lg">
-    <button onclick="updateProfile()" class="bg-purple-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Update Profile</button>
-    <button onclick="goTo('feed-page')" class="mt-4 bg-gray-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Back</button>
-  </div>
+<!-- ====================== Profile ====================== -->
+<section id="profile-page" class="fade p-4 hidden">
+  <h2 class="text-2xl font-bold mb-4">Profile</h2>
+  <input id="profile-username" placeholder="New Username">
+  <input id="profile-email" placeholder="New Email">
+  <input id="profile-password" type="password" placeholder="New Password">
+  <button onclick="updateProfile()">Update Profile</button>
+  <button onclick="goTo('feed-page')" class="mt-4">Back</button>
+</section>
 
 </div>
 
-<footer class="bg-gray-200 text-center py-3 text-sm text-gray-600">
-A product of <strong>BloxStudios</strong> | Muhammad Ahmad | SociaNova
+<footer>
+  A product of <strong>BloxStudios</strong> | Muhammad Ahmad
 </footer>
 
 <script>
 const API_URL = "https://socianova.onrender.com/api";
 let token = localStorage.getItem("token");
 
-// ====================== PAGE HANDLING ======================
+// ===== Page Handling =====
 function showPage(id){
-  document.querySelectorAll("section, #feed-page, #messages-page, #profile-page").forEach(p => p.classList.add("hidden"));
+  document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
 }
 
-function goTo(pageId){
-  if(pageId === "feed-page") loadPosts();
-  if(pageId === "messages-page") loadMessages();
-  if(pageId === "profile-page") loadProfile();
-  showPage(pageId);
-}
-
-// ====================== AUTH ======================
+// ===== Auth =====
 async function signupUser(){
   const username = document.getElementById("signup-username").value.trim();
   const email = document.getElementById("signup-email").value.trim();
   const password = document.getElementById("signup-password").value.trim();
   if(!username || !email || !password) return alert("Fill all fields");
 
-  try {
-    const res = await fetch(`${API_URL}/auth/register`, {
+  try{
+    const res = await fetch(`${API_URL}/auth/register`,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({username,email,password})
+      body: JSON.stringify({username,email,password})
     });
     const data = await res.json();
     if(!res.ok) return alert(data.message || "Signup failed");
 
-    // ✅ Automatically log in the user after signup
     token = data.token;
     localStorage.setItem("token", token);
-    alert("Signup successful! You are now logged in.");
-    goTo("feed-page");
-
-  } catch(err) {
+    showPage("feed-page");
+    loadPosts();
+  }catch(err){
     console.error(err);
     alert("Signup error");
   }
@@ -129,20 +197,20 @@ async function loginUser(){
   const password = document.getElementById("login-password").value.trim();
   if(!email || !password) return alert("Fill all fields");
 
-  try {
+  try{
     const res = await fetch(`${API_URL}/auth/login`,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({email,password})
+      body: JSON.stringify({email,password})
     });
     const data = await res.json();
     if(!res.ok) return alert(data.message || "Login failed");
 
     token = data.token;
     localStorage.setItem("token", token);
-    alert("Login successful!");
-    goTo("feed-page");
-  } catch(err){
+    showPage("feed-page");
+    loadPosts();
+  }catch(err){
     console.error(err);
     alert("Login error");
   }
@@ -154,63 +222,94 @@ function logout(){
   showPage("login-page");
 }
 
-// ====================== POSTS ======================
+// ===== Posts =====
 async function createPost(){
   const content = document.getElementById("post-content").value.trim();
-  if(!content) return;
-  const res = await fetch(`${API_URL}/posts`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
-    body:JSON.stringify({content})
-  });
-  if(res.ok){
-    document.getElementById("post-content").value="";
-    loadPosts();
+  const mediaFiles = document.getElementById("post-media").files;
+
+  if(!content && mediaFiles.length===0) return;
+
+  const formData = new FormData();
+  formData.append("content", content);
+  for(let f of mediaFiles) formData.append("media", f);
+
+  try{
+    const res = await fetch(`${API_URL}/posts`,{
+      method:"POST",
+      headers:{"Authorization":`Bearer ${token}`},
+      body: formData
+    });
+    if(res.ok){
+      document.getElementById("post-content").value="";
+      document.getElementById("post-media").value="";
+      document.getElementById("upload-preview").innerHTML="";
+      loadPosts();
+    }
+  }catch(err){
+    console.error(err);
+    alert("Post failed");
   }
 }
 
 async function loadPosts(){
-  const res = await fetch(`${API_URL}/posts`,{headers:{"Authorization":`Bearer ${token}`}});
-  if(res.status===401){logout(); return;}
-  const posts = await res.json();
-  document.getElementById("posts").innerHTML = posts.map(p=>
-    `<div class="border p-2 rounded-lg bg-white"><strong>${p.author}</strong>: ${p.content}</div>`
-  ).join("");
+  try{
+    const res = await fetch(`${API_URL}/posts`,{
+      headers:{"Authorization":`Bearer ${token}`}
+    });
+    if(res.status===401){logout(); return;}
+    const posts = await res.json();
+    document.getElementById("posts").innerHTML = posts.map(p=>{
+      const mediaHtml = p.media ? p.media.map(m=>{
+        if(m.endsWith(".mp4")||m.endsWith(".webm")) return `<video src="${m}" controls class="rounded-lg w-full max-h-60"></video>`;
+        return `<img src="${m}" class="rounded-lg w-full max-h-60"/>`;
+      }).join("") : "";
+      return `<div class="post-card"><div class="post-author">${p.author}</div><div class="post-content">${p.content}</div>${mediaHtml}</div>`;
+    }).join("");
+  }catch(err){ console.error(err); }
 }
 
-// ====================== MESSAGES ======================
+// ===== Messages =====
 async function sendMessage(){
   const receiver = document.getElementById("receiver").value.trim();
   const text = document.getElementById("message-text").value.trim();
   if(!receiver || !text) return;
-  const res = await fetch(`${API_URL}/messages`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
-    body:JSON.stringify({receiver,text})
-  });
-  if(res.ok){
-    document.getElementById("message-text").value="";
-    loadMessages();
-  }
+
+  try{
+    const res = await fetch(`${API_URL}/messages`,{
+      method:"POST",
+      headers:{"Authorization":`Bearer ${token}`,"Content-Type":"application/json"},
+      body: JSON.stringify({receiver,text})
+    });
+    if(res.ok){
+      document.getElementById("message-text").value="";
+      loadMessages();
+    }
+  }catch(err){ console.error(err); }
 }
 
 async function loadMessages(){
-  const res = await fetch(`${API_URL}/messages`,{headers:{"Authorization":`Bearer ${token}`}});
-  if(res.status===401){logout(); return;}
-  const msgs = await res.json();
-  document.getElementById("messages").innerHTML = msgs.map(m=>
-    `<div class="border p-2 rounded-lg bg-white"><strong>${m.sender}</strong>: ${m.text}</div>`
-  ).join("");
+  try{
+    const res = await fetch(`${API_URL}/messages`,{
+      headers:{"Authorization":`Bearer ${token}`}
+    });
+    if(res.status===401){logout(); return;}
+    const msgs = await res.json();
+    document.getElementById("messages").innerHTML = msgs.map(m=>`<div class="message-card"><div class="message-sender">${m.sender}</div><div>${m.text}</div></div>`).join("");
+  }catch(err){ console.error(err); }
 }
 
-// ====================== PROFILE ======================
+// ===== Profile =====
 async function loadProfile(){
-  const res = await fetch(`${API_URL}/auth/me`,{headers:{"Authorization":`Bearer ${token}`}});
-  if(res.ok){
-    const data = await res.json();
-    document.getElementById("profile-username").value = data.username || "";
-    document.getElementById("profile-email").value = data.email || "";
-  }
+  try{
+    const res = await fetch(`${API_URL}/auth/me`,{
+      headers:{"Authorization":`Bearer ${token}`}
+    });
+    if(res.ok){
+      const data = await res.json();
+      document.getElementById("profile-username").value=data.username||"";
+      document.getElementById("profile-email").value=data.email||"";
+    }
+  }catch(err){ console.error(err); }
 }
 
 async function updateProfile(){
@@ -219,19 +318,33 @@ async function updateProfile(){
   const password = document.getElementById("profile-password").value.trim();
   if(!username && !email && !password) return alert("Fill at least one field");
 
-  const res = await fetch(`${API_URL}/auth/update`,{
-    method:"PUT",
-    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
-    body:JSON.stringify({username,email,password})
-  });
-  if(res.ok) alert("Profile updated!");
-  else alert("Update failed");
+  try{
+    const res = await fetch(`${API_URL}/auth/update`,{
+      method:"PUT",
+      headers:{"Authorization":`Bearer ${token}`,"Content-Type":"application/json"},
+      body: JSON.stringify({username,email,password})
+    });
+    if(res.ok) alert("Profile updated!");
+    else alert("Update failed");
+  }catch(err){ console.error(err); }
 }
 
-// ====================== AUTO LOGIN ======================
-if(token) goTo("feed-page");
-else showPage("login-page");
-</script>
+// ===== Auto-login =====
+if(token){
+  showPage("feed-page");
+  loadPosts();
+}else showPage("login-page");
 
+// ===== Media preview =====
+document.getElementById("post-media")?.addEventListener("change", function(e){
+  const preview = document.getElementById("upload-preview");
+  preview.innerHTML="";
+  for(let f of e.target.files){
+    const url = URL.createObjectURL(f);
+    if(f.type.startsWith("image/")) preview.innerHTML+=`<img src="${url}" class="rounded-lg w-24 h-24 object-cover">`;
+    else if(f.type.startsWith("video/")) preview.innerHTML+=`<video src="${url}" class="rounded-lg w-24 h-24" controls></video>`;
+  }
+});
+</script>
 </body>
 </html>
