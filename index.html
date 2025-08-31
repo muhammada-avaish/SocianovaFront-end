@@ -14,37 +14,36 @@
 
 <div class="max-w-2xl mx-auto p-6 flex-grow">
 
-  <!-- ===== AUTH ===== -->
-  <section id="login-page" class="min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
-      <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
-      <input id="login-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
-      <input id="login-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
-      <button onclick="loginUser()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Login</button>
-      <p class="text-sm mt-4 text-center">Don’t have an account? 
-        <a href="#" onclick="showPage('signup-page')" class="text-blue-500">Sign Up</a>
-      </p>
-    </div>
-  </section>
+  <!-- ====================== AUTH PAGES ====================== -->
+<section id="signup-page" class="min-h-screen flex items-center justify-center bg-gray-100 hidden">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-center mb-6">Sign Up - SociaNova</h2>
+    <input id="signup-username" type="text" placeholder="Username" class="w-full p-2 border rounded mb-3" />
+    <input id="signup-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
+    <input id="signup-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
+    <button onclick="signupUser()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Sign Up</button>
+    <p class="text-sm mt-4 text-center">Already have an account? 
+      <a href="#" onclick="showPage('login-page')" class="text-blue-500">Login</a>
+    </p>
+  </div>
+</section>
 
-  <section id="signup-page" class="min-h-screen flex items-center justify-center hidden">
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
-      <h2 class="text-2xl font-bold text-center mb-6">Sign Up</h2>
-      <input id="signup-username" type="text" placeholder="Username" class="w-full p-2 border rounded mb-3" />
-      <input id="signup-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
-      <input id="signup-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
-      <button onclick="signupUser()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Sign Up</button>
-      <p class="text-sm mt-4 text-center">Already have an account? 
-        <a href="#" onclick="showPage('login-page')" class="text-blue-500">Login</a>
-      </p>
-    </div>
-  </section>
+<section id="login-page" class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-center mb-6">Login - SociaNova</h2>
+    <input id="login-email" type="email" placeholder="Email" class="w-full p-2 border rounded mb-3" />
+    <input id="login-password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-3" />
+    <button onclick="loginUser()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Login</button>
+    <p class="text-sm mt-4 text-center">Don’t have an account? 
+      <a href="#" onclick="showPage('signup-page')" class="text-blue-500">Sign Up</a>
+    </p>
+  </div>
+</section>
 
   <!-- ===== Feed ===== -->
-  <section id="feed-page" class="fade hidden">
-    <h2 class="text-2xl font-bold mb-4">Feed</h2>
+  <div id="feed-page" class="fade">
+    <h2 class="text-2xl font-bold mb-4">SociaNova Feed</h2>
     <textarea id="post-content" class="w-full p-2 border rounded-lg mb-2" placeholder="What's on your mind?"></textarea>
-    <input type="file" id="post-media" accept="image/*,video/*" class="mb-2" />
     <button onclick="createPost()" class="bg-green-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Post</button>
     <div id="posts" class="mt-4 space-y-2"></div>
     <div class="flex gap-2 mt-6">
@@ -52,185 +51,186 @@
       <button onclick="goTo('profile-page')" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Profile</button>
       <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:shadow-md transition">Logout</button>
     </div>
-  </section>
+  </div>
 
   <!-- ===== Messages ===== -->
-  <section id="messages-page" class="fade hidden">
+  <div id="messages-page" class="fade">
     <h2 class="text-2xl font-bold mb-4">Messages</h2>
     <input id="receiver" placeholder="Receiver email" class="w-full border p-2 mb-2 rounded-lg">
     <textarea id="message-text" placeholder="Type a message..." class="w-full border p-2 rounded-lg mb-2"></textarea>
     <button onclick="sendMessage()" class="bg-blue-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Send</button>
     <div id="messages" class="mt-4 space-y-2"></div>
     <button onclick="goTo('feed-page')" class="mt-4 bg-gray-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Back</button>
-  </section>
+  </div>
 
   <!-- ===== Profile ===== -->
-  <section id="profile-page" class="fade hidden">
+  <div id="profile-page" class="fade">
     <h2 class="text-2xl font-bold mb-4">Profile</h2>
     <input id="profile-username" placeholder="New Username" class="w-full border p-2 mb-2 rounded-lg">
     <input id="profile-email" placeholder="New Email" class="w-full border p-2 mb-2 rounded-lg">
     <input id="profile-password" type="password" placeholder="New Password" class="w-full border p-2 mb-2 rounded-lg">
     <button onclick="updateProfile()" class="bg-purple-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Update Profile</button>
     <button onclick="goTo('feed-page')" class="mt-4 bg-gray-500 px-4 py-2 rounded-lg text-white hover:shadow-md transition">Back</button>
-  </section>
+  </div>
 
 </div>
 
 <footer class="bg-gray-200 text-center py-3 text-sm text-gray-600">
-A product of <strong>BloxStudios</strong> | Muhammad Ahmad
+A product of <strong>BloxStudios</strong> | Muhammad Ahmad | SociaNova
 </footer>
 
 <script>
 const API_URL = "https://socianova.onrender.com/api";
 let token = localStorage.getItem("token");
 
-// ===== Page Handling =====
-function showPage(id) {
-  document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+// ====================== PAGE HANDLING ======================
+function showPage(id){
+  document.querySelectorAll("section, #feed-page, #messages-page, #profile-page").forEach(p => p.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
 }
 
-// ===== Auth =====
-async function signupUser() {
+function goTo(pageId){
+  if(pageId === "feed-page") loadPosts();
+  if(pageId === "messages-page") loadMessages();
+  if(pageId === "profile-page") loadProfile();
+  showPage(pageId);
+}
+
+// ====================== AUTH ======================
+async function signupUser(){
   const username = document.getElementById("signup-username").value.trim();
   const email = document.getElementById("signup-email").value.trim();
   const password = document.getElementById("signup-password").value.trim();
-  if (!username || !email || !password) return alert("Fill all fields");
+  if(!username || !email || !password) return alert("Fill all fields");
 
-  const res = await fetch(`${API_URL}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, email, password })
-  });
-  const data = await res.json();
-  if (res.ok) {
-    alert("Signup successful! Please login.");
-    showPage('login-page');
-  } else alert(data.message || "Signup failed");
-}
+  try {
+    const res = await fetch(`${API_URL}/auth/register`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,email,password})
+    });
+    const data = await res.json();
+    if(!res.ok) return alert(data.message || "Signup failed");
 
-async function loginUser() {
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value.trim();
-  if (!email || !password) return alert("Fill all fields");
-
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-  const data = await res.json();
-  if (res.ok) {
+    // ✅ Automatically log in the user after signup
     token = data.token;
     localStorage.setItem("token", token);
-    showPage("feed-page");
-    loadPosts();
-  } else alert(data.message || "Login failed");
+    alert("Signup successful! You are now logged in.");
+    goTo("feed-page");
+
+  } catch(err) {
+    console.error(err);
+    alert("Signup error");
+  }
 }
 
-function logout() {
+async function loginUser(){
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+  if(!email || !password) return alert("Fill all fields");
+
+  try {
+    const res = await fetch(`${API_URL}/auth/login`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password})
+    });
+    const data = await res.json();
+    if(!res.ok) return alert(data.message || "Login failed");
+
+    token = data.token;
+    localStorage.setItem("token", token);
+    alert("Login successful!");
+    goTo("feed-page");
+  } catch(err){
+    console.error(err);
+    alert("Login error");
+  }
+}
+
+function logout(){
   token = null;
   localStorage.removeItem("token");
   showPage("login-page");
 }
 
-// ===== Posts =====
-async function createPost() {
+// ====================== POSTS ======================
+async function createPost(){
   const content = document.getElementById("post-content").value.trim();
-  const media = document.getElementById("post-media").files[0];
-  if (!content && !media) return alert("Post something or add media");
-
-  const formData = new FormData();
-  formData.append("content", content);
-  if (media) formData.append("media", media);
-
-  const res = await fetch(`${API_URL}/posts`, {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${token}` },
-    body: formData
+  if(!content) return;
+  const res = await fetch(`${API_URL}/posts`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({content})
   });
-  if (res.ok) {
-    document.getElementById("post-content").value = "";
-    document.getElementById("post-media").value = "";
+  if(res.ok){
+    document.getElementById("post-content").value="";
     loadPosts();
-  } else {
-    const data = await res.json();
-    alert(data.message || "Failed to post");
   }
 }
 
-async function loadPosts() {
-  const res = await fetch(`${API_URL}/posts`, { headers: { "Authorization": `Bearer ${token}` } });
-  if (res.status === 401) { logout(); return; }
+async function loadPosts(){
+  const res = await fetch(`${API_URL}/posts`,{headers:{"Authorization":`Bearer ${token}`}});
+  if(res.status===401){logout(); return;}
   const posts = await res.json();
-  document.getElementById("posts").innerHTML = posts.map(p => `
-    <div class="border p-2 rounded-lg bg-white">
-      <strong>${p.author.username}</strong>: ${p.content || ""}
-      ${p.media ? `<${p.media.endsWith('.mp4') ? 'video' : 'img'} src="${p.media}" ${p.media.endsWith('.mp4') ? 'controls class="w-full mt-2 rounded-lg"' : 'class="w-full mt-2 rounded-lg"'} />` : ""}
-    </div>
-  `).join("");
+  document.getElementById("posts").innerHTML = posts.map(p=>
+    `<div class="border p-2 rounded-lg bg-white"><strong>${p.author}</strong>: ${p.content}</div>`
+  ).join("");
 }
 
-// ===== Messages =====
-async function sendMessage() {
+// ====================== MESSAGES ======================
+async function sendMessage(){
   const receiver = document.getElementById("receiver").value.trim();
   const text = document.getElementById("message-text").value.trim();
-  if (!receiver || !text) return;
-  const res = await fetch(`${API_URL}/messages`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-    body: JSON.stringify({ receiver, text })
+  if(!receiver || !text) return;
+  const res = await fetch(`${API_URL}/messages`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({receiver,text})
   });
-  if (res.ok) {
-    document.getElementById("message-text").value = "";
+  if(res.ok){
+    document.getElementById("message-text").value="";
     loadMessages();
   }
 }
 
-async function loadMessages() {
-  const res = await fetch(`${API_URL}/messages`, { headers: { "Authorization": `Bearer ${token}` } });
-  if (res.status === 401) { logout(); return; }
+async function loadMessages(){
+  const res = await fetch(`${API_URL}/messages`,{headers:{"Authorization":`Bearer ${token}`}});
+  if(res.status===401){logout(); return;}
   const msgs = await res.json();
-  document.getElementById("messages").innerHTML = msgs.map(m => `
-    <div class="border p-2 rounded-lg bg-white"><strong>${m.sender}</strong>: ${m.text}</div>
-  `).join("");
+  document.getElementById("messages").innerHTML = msgs.map(m=>
+    `<div class="border p-2 rounded-lg bg-white"><strong>${m.sender}</strong>: ${m.text}</div>`
+  ).join("");
 }
 
-// ===== Profile =====
-async function loadProfile() {
-  const res = await fetch(`${API_URL}/auth/me`, { headers: { "Authorization": `Bearer ${token}` } });
-  if (res.ok) {
+// ====================== PROFILE ======================
+async function loadProfile(){
+  const res = await fetch(`${API_URL}/auth/me`,{headers:{"Authorization":`Bearer ${token}`}});
+  if(res.ok){
     const data = await res.json();
     document.getElementById("profile-username").value = data.username || "";
     document.getElementById("profile-email").value = data.email || "";
   }
 }
 
-async function updateProfile() {
+async function updateProfile(){
   const username = document.getElementById("profile-username").value.trim();
   const email = document.getElementById("profile-email").value.trim();
   const password = document.getElementById("profile-password").value.trim();
-  if (!username && !email && !password) return alert("Fill at least one field");
+  if(!username && !email && !password) return alert("Fill at least one field");
 
-  const res = await fetch(`${API_URL}/auth/update`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-    body: JSON.stringify({ username, email, password })
+  const res = await fetch(`${API_URL}/auth/update`,{
+    method:"PUT",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({username,email,password})
   });
-  if (res.ok) alert("Profile updated!");
+  if(res.ok) alert("Profile updated!");
   else alert("Update failed");
 }
 
-// ===== Auto-login =====
-if (token) { showPage("feed-page"); loadPosts(); }
+// ====================== AUTO LOGIN ======================
+if(token) goTo("feed-page");
 else showPage("login-page");
-
-function goTo(page) {
-  if(page === "feed-page") loadPosts();
-  if(page === "messages-page") loadMessages();
-  if(page === "profile-page") loadProfile();
-  showPage(page);
-}
 </script>
 
 </body>
